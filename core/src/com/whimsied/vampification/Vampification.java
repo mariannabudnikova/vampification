@@ -29,7 +29,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 public class Vampification extends ApplicationAdapter {
 
 	private Stage stage;
-	ProgressBar progressBar;
 
 	@Override
 	public void create() {
@@ -40,32 +39,10 @@ public class Vampification extends ApplicationAdapter {
 
 		HumanActor humanActor = new HumanActor();
 
-
-		progressBar = CreateProgressBar();
-
-		stage.addActor(progressBar);
 		stage.addActor(vampireActor);
 		stage.addActor(humanActor);
 
 		stage.setKeyboardFocus(vampireActor);
-	}
-
-	public ProgressBar CreateProgressBar(){
-
-		Skin skin = new Skin();
-		Pixmap pixmap = new Pixmap(20, 20, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.WHITE);
-		pixmap.fill();
-		skin.add("white", new Texture(pixmap));
-
-		Drawable textureBar = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("bar.png"))));
-		ProgressBar.ProgressBarStyle barStyle = new ProgressBar.ProgressBarStyle(skin.newDrawable("white", Color.DARK_GRAY), textureBar);
-		ProgressBar bar = new ProgressBar(0, 20, 0.5f, true, barStyle);
-		bar.setPosition(420, 200);
-		bar.setSize(290, bar.getPrefHeight());
-		bar.setValue(0);
-		bar.setAnimateDuration(2);
-		return bar;
 	}
 
 	@Override
