@@ -4,12 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 
 /**
@@ -21,25 +18,18 @@ public class VampireActor extends WalkableActor {
     boolean currentlyDrinking = false;
     BloodProgressBar bloodProgressBar;
 
-    public VampireActor()
+    public VampireActor(float x, float y)
     {
         texture = new Texture(Gdx.files.internal("vampire.png"));
-        setX(500);
-        setY(50);
+        setX(x);
+        setY(y);
         setBounds(getX(), getY(), texture.getWidth(), texture.getHeight());
 
         addListener(new InputListener() {
             public boolean keyDown(InputEvent event, int keycode) {
                 switch (keycode) {
                     case Input.Keys.SPACE:
-                        HumanActor human = getClosestHuman();
-
-                        if (!currentlyDrinking && canStartDrinkingBloodFromHuman(human)){
-                            bloodProgressBar = new BloodProgressBar();
-                            getStage().addActor(bloodProgressBar.getBar());
-
-                            startDrinking();
-                        }
+                        drinkIfPossible();
                         break;
                 }
                 return true;
@@ -48,10 +38,7 @@ public class VampireActor extends WalkableActor {
             public boolean keyUp(InputEvent event, int keycode) {
                 switch (keycode) {
                     case Input.Keys.SPACE:
-                        if (currentlyDrinking) {
-                            currentlyDrinking = false;
-                            bloodProgressBar.getBar().remove();
-                        }
+                        stopDrinking();
                         break;
                 }
                 return true;
@@ -59,28 +46,40 @@ public class VampireActor extends WalkableActor {
         });
     }
 
-    public boolean canStartDrinkingBloodFromHuman (Actor human){
-        if (human == null) return false;
-        float distance = getDistanceFromHuman(human);
-        float vampireWidth = getWidth();
-        float humanWidth = human.getWidth();
-        boolean vampireIsToTheLeft = getX() < human.getX();
-        return vampireIsToTheLeft ? distance < vampireWidth : distance < humanWidth ;
+    public void drinkIfPossible(){
+        HumanActor human = ActorDistanceCalculator.getClosestHuman(this, getStage());
+        if (!currentlyDrinking && ActorDistanceCalculator.closeToInteract(this, human)){
+            bloodProgressBar = new BloodProgressBar();
+            getStage().addActor(bloodProgressBar.getLabel());
+            startDrinking();
+        }
+    }
+
+    public void stopDrinking(){
+        if (currentlyDrinking) {
+            currentlyDrinking = false;
+            if (bloodProgressBar.bloodLevelIsAtMax()) {
+                setVisible(false);
+                possess(ActorDistanceCalculator.getClosestHuman(this, getStage()));
+            }
+        }
     }
 
     public void startDrinking(){
         currentlyDrinking = true;
-        Timer.schedule(new Timer.Task() {
-                   @Override
-                   public void run() {
-                       if (!bloodProgressBar.bloodLevelIsAtMax()) {
-                           bloodProgressBar.increaseBloodLevel();
-                       }
-                   }
-               },
-            0,
-            1
-        );
+        Timer.Task drinkingTask = new Timer.Task() {
+            @Override
+            public void run() {
+                if (currentlyDrinking && !bloodProgressBar.bloodLevelIsAtMax()) {
+                    bloodProgressBar.increaseBloodLevel();
+                }
+            }
+        };
+        Timer.schedule(drinkingTask, 0, 0.1f);
+    }
+
+    public void possess(HumanActor human){
+        getStage().setKeyboardFocus(human);
     }
 
     @Override
@@ -88,26 +87,7 @@ public class VampireActor extends WalkableActor {
         batch.draw(texture, getX(), getY());
     }
 
-    public HumanActor getClosestHuman(){
-        float minDistance = Float.MAX_VALUE;
-        HumanActor closestHuman = null;
-        Array<Actor> actors = getStage().getActors();
-
-        for (Actor actor : actors){
-            if (actor.getClass().equals(HumanActor.class)){
-                float distance = getDistanceFromHuman(actor);
-                if (distance < minDistance){
-                    minDistance = distance;
-                    closestHuman = (HumanActor)actor;
-                }
-            }
-        }
-        return closestHuman;
-    }
-
-    public float getDistanceFromHuman(Actor human){
-        Vector vampireLocation = new Vector2(getX(), getY());
-        Vector humanLocation = new Vector2(human.getX(), human.getY());
-        return vampireLocation.dst(humanLocation);
+    public boolean canMove(){
+        return !currentlyDrinking;
     }
 }

@@ -35,12 +35,18 @@ public class Vampification extends ApplicationAdapter {
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 
-		VampireActor vampireActor = new VampireActor();
+        DoorActor doorActor = new DoorActor(450, 50);
 
-		HumanActor humanActor = new HumanActor();
+		VampireActor vampireActor = new VampireActor(500, 50);
 
+		HumanActor humanActor = new HumanActor(50, 50);
+
+
+
+        stage.addActor(doorActor);
 		stage.addActor(vampireActor);
 		stage.addActor(humanActor);
+
 
 		stage.setKeyboardFocus(vampireActor);
 	}

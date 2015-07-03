@@ -1,6 +1,8 @@
 package com.whimsied.vampification;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -41,9 +43,9 @@ public abstract class WalkableActor extends Actor {
 
     @Override
     public void act(float delta){
-        if (movingRight)
+        if (canMove() && movingRight)
             moveRight();
-        else if (movingLeft)
+        else if (canMove() && movingLeft)
             moveLeft();
     }
 
@@ -53,5 +55,10 @@ public abstract class WalkableActor extends Actor {
 
     public void moveLeft(){
         setX(getX() - 5);
+    }
+
+    public boolean canMove()
+    {
+        return true;
     }
 }
