@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 */
 public class DoorActor extends Actor{
     Texture texture;
+    boolean locked = true;
 
     public DoorActor(float x, float y)
     {
@@ -23,5 +24,14 @@ public class DoorActor extends Actor{
     @Override
     public void draw(Batch batch, float alpha){
         batch.draw(texture, getX(), getY());
+    }
+
+    public void unlock() {
+        texture = new Texture(Gdx.files.internal("door_open.png"));
+        locked = false;
+    }
+
+    public boolean isLocked(){
+        return locked;
     }
 }

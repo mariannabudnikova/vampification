@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class ActorDistanceCalculator {
 
-    public static Actor getClosesActor(Actor thisActor, Stage stage, Class actorClass){
+    public static Actor getClosestActor(Actor thisActor, Stage stage, Class actorClass){
         float minDistance = Float.MAX_VALUE;
         Actor closestActor = null;
 
@@ -30,11 +30,15 @@ public class ActorDistanceCalculator {
     }
 
     public static HumanActor getClosestHuman(Actor thisActor, Stage stage){
-        return (HumanActor)getClosesActor(thisActor, stage, HumanActor.class);
+        return (HumanActor) getClosestActor(thisActor, stage, HumanActor.class);
     }
 
-    public static HumanActor getClosestDoor(Actor thisActor, Stage stage){
-        return (HumanActor)getClosesActor(thisActor, stage, DoorActor.class);
+    public static DoorActor getClosestDoor(Actor thisActor, Stage stage){
+        return (DoorActor) getClosestActor(thisActor, stage, DoorActor.class);
+    }
+
+    public static VampireActor getClosestVampire(Actor thisActor, Stage stage){
+        return (VampireActor) getClosestActor(thisActor, stage, VampireActor.class);
     }
 
 
@@ -51,5 +55,16 @@ public class ActorDistanceCalculator {
         float actor2Width = actor2.getWidth();
         boolean actor1IsToTheLeft = actor1.getX() < actor2.getX();
         return actor1IsToTheLeft ? distance < actor1Width : distance < actor2Width ;
+    }
+
+    public static boolean isOnLeftEdgeOfWindow(Actor actor){
+
+        float leftPosition = actor.getX();
+        return leftPosition <= 0;
+    }
+
+    public static boolean isOnRightEdgeOfWindow(Actor actor, Stage stage){
+        float rightPosition = actor.getX() + actor.getWidth();
+        return rightPosition >= stage.getWidth();
     }
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 
 /**
@@ -49,8 +50,7 @@ public class VampireActor extends WalkableActor {
     public void drinkIfPossible(){
         HumanActor human = ActorDistanceCalculator.getClosestHuman(this, getStage());
         if (!currentlyDrinking && ActorDistanceCalculator.closeToInteract(this, human)){
-            bloodProgressBar = new BloodProgressBar();
-            getStage().addActor(bloodProgressBar.getLabel());
+            bloodProgressBar = new BloodProgressBar(getStage());
             startDrinking();
         }
     }
@@ -59,9 +59,9 @@ public class VampireActor extends WalkableActor {
         if (currentlyDrinking) {
             currentlyDrinking = false;
             if (bloodProgressBar.bloodLevelIsAtMax()) {
-                setVisible(false);
                 possess(ActorDistanceCalculator.getClosestHuman(this, getStage()));
             }
+            bloodProgressBar.reset();
         }
     }
 
@@ -80,6 +80,11 @@ public class VampireActor extends WalkableActor {
 
     public void possess(HumanActor human){
         getStage().setKeyboardFocus(human);
+        remove();
+    }
+
+    public boolean isDrinking(){
+        return currentlyDrinking;
     }
 
     @Override

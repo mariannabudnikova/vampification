@@ -50,10 +50,16 @@ public abstract class WalkableActor extends Actor {
     }
 
     public void moveRight(){
+        getStage().getCamera().translate(5, 0, 0);
+        getStage().getCamera().update();
+
         setX(getX() + 5);
     }
 
     public void moveLeft(){
+        getStage().getCamera().translate(-5, 0, 0);
+        getStage().getCamera().update();
+
         setX(getX() - 5);
     }
 

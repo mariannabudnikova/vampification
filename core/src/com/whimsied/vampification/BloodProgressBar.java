@@ -1,56 +1,50 @@
 package com.whimsied.vampification;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
  * Created by marianna on 6/21/15.
  */
 public class BloodProgressBar {
 
-    //private ProgressBar bloodProgressBar;
+    //private ProgressBar progressBar;
     private Label bloodLevelLabel;
 
     private float MIN_BLOOD = 0;
     private float MAX_BLOOD = 100;
     private float currBloodLevel;
 
-    public BloodProgressBar(){
+    public BloodProgressBar(Stage stage){
         currBloodLevel = MIN_BLOOD;
-        //bloodProgressBar = createProgressBar();
-        bloodLevelLabel = new Label(getBloodLabel(), new Label.LabelStyle(new BitmapFont(), Color.RED));
+        //progressBar = createProgressBar();
+        bloodLevelLabel = ActorFinder.getStatusLabel(stage);
+        bloodLevelLabel.setText(getBloodLabel());
     }
 
     public CharSequence getBloodLabel(){
         return currBloodLevel + "/" + MAX_BLOOD;
     }
 
-    public Label getLabel(){
-        return bloodLevelLabel;
-    }
 
 //    public ProgressBar getBar(){
-//        return bloodProgressBar;
+//        return progressBar;
 //    }
 
     public void increaseBloodLevel()
     {
         currBloodLevel +=10;
         bloodLevelLabel.setText(getBloodLabel());
-        //bloodProgressBar.setValue(currBloodLevel);
+        //progressBar.setValue(currBloodLevel);
     }
 
     public boolean bloodLevelIsAtMax(){
         return currBloodLevel == MAX_BLOOD;
+    }
+
+    public void reset() {
+        currBloodLevel = MIN_BLOOD;
+        bloodLevelLabel.setText("");
     }
 
 //    private ProgressBar createProgressBar() {
